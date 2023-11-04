@@ -15,10 +15,22 @@ AGridActor::AGridActor()
 	GridSizeZ = 5;
 
 	// Set the default cell class.
-	static ConstructorHelpers::FClassFinder<AActor> CellAsset(TEXT("/Game/Path/To/CellClass"));
-	if (CellAsset.Succeeded())
+	static ConstructorHelpers::FClassFinder<AActor> CellClass1Asset(TEXT("/Game/Path/To/YourCellClass1"));
+	if (CellClass1Asset.Succeeded())
 	{
-		CellClass = CellAsset.Class;
+		CellClasses.Add(CellClass1Asset.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<AActor> CellClass2Asset(TEXT("/Game/Path/To/YourCellClass2"));
+	if (CellClass2Asset.Succeeded())
+	{
+		CellClasses.Add(CellClass2Asset.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<AActor> CellClass3Asset(TEXT("/Game/Path/To/YourCellClass3"));
+	if (CellClass3Asset.Succeeded())
+	{
+		CellClasses.Add(CellClass3Asset.Class);
 	}
 }
 
@@ -27,14 +39,20 @@ void AGridActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (CellClass)
+	if (CellClasses.Num() > 0)
 	{
 		for (int32 X = 0; X < GridSizeX; X++)
 		{
 			for (int32 Z = 0; Z < GridSizeZ; Z++)
 			{
 				FVector SpawnLocation = FVector(X * 100, 0, Z * 100); // Adjust the spacing as needed.
-				AActor* NewCell = GetWorld()->SpawnActor<AActor>(CellClass, SpawnLocation, FRotator::ZeroRotator);
+
+				// Choose a random actor class from CellClasses
+				int32 RandomIndex = FMath::RandRange(0, CellClasses.Num() - 1);
+				TSubclassOf<AActor> ChosenCellClass = CellClasses[RandomIndex];
+
+				// Spawn the selected actor class at the SpawnLocation
+				AActor* NewCell = GetWorld()->SpawnActor<AActor>(ChosenCellClass, SpawnLocation, FRotator::ZeroRotator);
 			}
 		}
 	}

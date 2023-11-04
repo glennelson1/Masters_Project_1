@@ -25,8 +25,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Grid Settings")
 	int32 GridSizeZ;
 
-	UPROPERTY(EditAnywhere, Category = "Grid Settings")
-	TSubclassOf<AActor> CellClass;
+	
+
+	UPROPERTY(EditAnywhere, Category = "Grid")
+	TArray<TSubclassOf<AActor>> CellClasses;
 
 public:	
 	// Called every frame
