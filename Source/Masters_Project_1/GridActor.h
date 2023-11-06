@@ -30,6 +30,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Grid")
 	TArray<TSubclassOf<AActor>> CellClasses;
 
+	
+	TArray<AActor*> Cellref;
+	UFUNCTION(BlueprintCallable)
+	void DeleteGrid();
+	
+	UFUNCTION(BlueprintCallable)
+	void SpawnGrid();
+
+	TSubclassOf<AActor> PickGrid(int32 X, int32 Z);
+	TSubclassOf<AActor> SelectCellClassBasedOnNeighbors(const TArray<AActor*>& NeighboringCells);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
