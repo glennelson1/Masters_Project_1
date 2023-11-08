@@ -54,6 +54,7 @@ void AGridActor::DeleteGrid()
 
 void AGridActor::SpawnGrid()
 {
+	
 	DeleteGrid();
 	if (CellClasses.Num() > 0)
 	{
@@ -62,8 +63,11 @@ void AGridActor::SpawnGrid()
 			for (int32 Z = 0; Z < GridSizeZ; Z++)
 			{
 				FVector SpawnLocation = FVector(X * 100, 0, Z * 100); // Adjust the spacing as needed.
-				AActor* NewCell = GetWorld()->SpawnActor<AActor>(PickGrid(1,1), SpawnLocation, FRotator::ZeroRotator);
+				AActor* NewCell;
+				FindNeigbours(SpawnLocation);
+				NewCell = GetWorld()->SpawnActor<AActor>(PickGrid(1,1), SpawnLocation, FRotator::ZeroRotator);
 				Cellref.Add(NewCell);
+				
 			}
 		}
 	}
@@ -77,7 +81,60 @@ TSubclassOf<AActor> AGridActor::PickGrid(int32 X, int32 Z)
 	
 }
 
+void AGridActor::FindNeigbours(FVector cellLoc)
+{
+	
+	FVector CellLocation = cellLoc;
+	AActor* NeighbourLeft = nullptr;
+	AActor* NeighbourRight = nullptr;
+	AActor* NeighbourUp = nullptr;
+	AActor* NeighbourDown = nullptr;
+		// Define the relative offsets for neighboring cells
+	FVector NeighbourOffsets[] = {
+		FVector(100, 0, 0),   // Right
+		FVector(-100, 0, 0),  // Left
+		FVector(0, 100, 0),   // Forward
+		FVector(0, -100, 0)   // Backward
+			// Add more offsets for other directions if needed
+	};
+	FHitResult HitResultLeft, HitResultRight, HitResultUp,HitResultDown;
+	FCollisionQueryParams CollisionParams;
+	//CollisionParams.AddIgnoredActor(); // Ignore the current cell
 
+	if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation,CellLocation + FVector(-100, 0, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultRight, CellLocation,CellLocation + FVector(100, 0, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultUp, CellLocation,CellLocation + FVector(0, 100, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation,CellLocation + FVector(0, -100, 0) , ECC_Visibility, CollisionParams))
+	{
+		NeighbourLeft = HitResultLeft.GetActor();
+		NeighbourRight = HitResultRight.GetActor();
+		NeighbourUp =HitResultUp.GetActor();
+		NeighbourDown = HitResultDown.GetActor();
+		if (NeighbourLeft->IsA(CellClasses[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("0 Left"));
+		}
+		if (NeighbourLeft->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
+		}
+		if (NeighbourLeft->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
+		}
+		if (NeighbourRight->IsA(CellClasses[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
+		}
+		if (NeighbourRight->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
+		}
+		if (NeighbourRight->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
+		}
+	}
+	
+
+}
 
 
 // Called every frame

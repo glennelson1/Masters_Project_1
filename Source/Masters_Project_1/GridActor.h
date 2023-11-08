@@ -39,8 +39,14 @@ protected:
 	void SpawnGrid();
 
 	TSubclassOf<AActor> PickGrid(int32 X, int32 Z);
-	TSubclassOf<AActor> SelectCellClassBasedOnNeighbors(const TArray<AActor*>& NeighboringCells);
+	
+	void FindNeigbours(FVector cellLoc);
+	AActor* NeighbourLeft = nullptr;
+	AActor* NeighbourRight = nullptr;
+	AActor* NeighbourUp = nullptr;
+	AActor* NeighbourDown = nullptr;
 
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
