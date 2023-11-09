@@ -83,12 +83,9 @@ TSubclassOf<AActor> AGridActor::PickGrid(int32 X, int32 Z)
 
 void AGridActor::FindNeigbours(FVector cellLoc)
 {
-	
+	//DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(100, 0, 0), FColor::Orange, false, 10.0f );
 	FVector CellLocation = cellLoc;
-	AActor* NeighbourLeft = nullptr;
-	AActor* NeighbourRight = nullptr;
-	AActor* NeighbourUp = nullptr;
-	AActor* NeighbourDown = nullptr;
+	
 		// Define the relative offsets for neighboring cells
 	FVector NeighbourOffsets[] = {
 		FVector(100, 0, 0),   // Right
@@ -100,11 +97,12 @@ void AGridActor::FindNeigbours(FVector cellLoc)
 	FHitResult HitResultLeft, HitResultRight, HitResultUp,HitResultDown;
 	FCollisionQueryParams CollisionParams;
 	//CollisionParams.AddIgnoredActor(); // Ignore the current cell
-
-	if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation,CellLocation + FVector(-100, 0, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultRight, CellLocation,CellLocation + FVector(100, 0, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultUp, CellLocation,CellLocation + FVector(0, 100, 0) , ECC_Visibility, CollisionParams) || GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation,CellLocation + FVector(0, -100, 0) , ECC_Visibility, CollisionParams))
+	
+	if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation,CellLocation * FVector(0, 0, 100) , ECC_Camera, CollisionParams))
 	{
+		DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(0, 0, 0), FColor::Orange, false, 10.0f );
 		NeighbourLeft = HitResultLeft.GetActor();
-		NeighbourRight = HitResultRight.GetActor();
+		
 		NeighbourUp =HitResultUp.GetActor();
 		NeighbourDown = HitResultDown.GetActor();
 		if (NeighbourLeft->IsA(CellClasses[0]))
@@ -119,20 +117,13 @@ void AGridActor::FindNeigbours(FVector cellLoc)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
 		}
-		if (NeighbourRight->IsA(CellClasses[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
-		}
-		if (NeighbourRight->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
-		}
-		if (NeighbourRight->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
-		}
+		
 	}
 	
+	
+	
+	
+
 
 }
 
