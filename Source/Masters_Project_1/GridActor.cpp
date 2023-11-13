@@ -85,48 +85,114 @@ void AGridActor::FindNeigbours(FVector cellLoc)
 {
 	//DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(100, 0, 0), FColor::Orange, false, 10.0f );
 	FVector CellLocation = cellLoc;
-	
-		// Define the relative offsets for neighboring cells
-	FVector NeighbourOffsets[] = {
-		FVector(100, 0, 0),   // Right
-		FVector(-100, 0, 0),  // Left
-		FVector(0, 100, 0),   // Forward
-		FVector(0, -100, 0)   // Backward
-			// Add more offsets for other directions if needed
-	};
+	FVector Start = cellLoc + FVector(0,0,0);
+	FVector End = cellLoc + FVector(-100,0,0);
+	FVector EndR = cellLoc - FVector(100,0,0);
+	// Define the relative offsets for neighboring cells
 	FHitResult HitResultLeft, HitResultRight, HitResultUp,HitResultDown;
 	FCollisionQueryParams CollisionParams;
+	//CollisionParams.AddIgnoredActor(this);
+	
+	bool bHitLeft = GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams);
+	bool bHitRight = GetWorld()->LineTraceSingleByChannel(HitResultRight,  CellLocation + FVector(100, 0, 0), CellLocation + FVector(100, 0, 0), ECC_Visibility, CollisionParams);
+	bool bHitUp = GetWorld()->LineTraceSingleByChannel(HitResultUp, CellLocation, CellLocation + FVector(0, 0, 100), ECC_Visibility, CollisionParams);
+	bool bHitDown = GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
+	NeighbourLeft = HitResultLeft.GetActor();
+	NeighbourRight = HitResultRight.GetActor();
+	NeighbourUp =HitResultUp.GetActor();
+	NeighbourDown = HitResultDown.GetActor();
+
+	if (bHitLeft) {
+		if(HitResultLeft.GetActor()->IsA(CellClasses[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("0 Left"));
+		}
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
+		}
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
+		}
+	} 
+	if (bHitRight)
+	{
+		if(HitResultRight.GetActor()->IsA(CellClasses[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
+		}
+		if(HitResultRight.GetActor()->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Right"));
+		}
+		if(HitResultRight.GetActor()->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Right"));
+		}
+	}
+
+	if (bHitUp) {
+		if(HitResultUp.GetActor()->IsA(CellClasses[0]))
+		{
+				UE_LOG(LogTemp, Warning, TEXT("0 Up"));
+		}
+		if(HitResultUp.GetActor()->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Up"));
+		}
+		if(HitResultUp.GetActor()->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Up"));
+		}
+	} 
+
+	if (bHitDown) {
+		if(HitResultDown.GetActor()->IsA(CellClasses[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("0 Down"));
+		}
+		if(HitResultDown.GetActor()->IsA(CellClasses[1]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("1 Down"));
+		}
+		if(HitResultDown.GetActor()->IsA(CellClasses[2]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("2 Down"));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Break"));
+	} 
+	
+	
+	
 	//CollisionParams.AddIgnoredActor(); // Ignore the current cell
 	
-	if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation,CellLocation * FVector(0, 0, 100) , ECC_Camera, CollisionParams))
+	/*if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, Start,End , ECC_Visibility, CollisionParams) )
 	{
-		DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(0, 0, 0), FColor::Orange, false, 10.0f );
+		DrawDebugLine(GetWorld(),Start,End, FColor::Orange, false, 10.0f );
 		NeighbourLeft = HitResultLeft.GetActor();
+		
+		NeighbourRight = HitResultRight.GetActor();
+
 		
 		NeighbourUp =HitResultUp.GetActor();
 		NeighbourDown = HitResultDown.GetActor();
 		if (NeighbourLeft->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left"));
+			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
 		}
 		if (NeighbourLeft->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
+			UE_LOG(LogTemp, Warning, TEXT("1 Right"));
 		}
 		if (NeighbourLeft->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
+			UE_LOG(LogTemp, Warning, TEXT("2 Right"));
 		}
 		
-	}
+	}*/
 	
-	
-	
-	
-
-
 }
-
 
 // Called every frame
 void AGridActor::Tick(float DeltaTime)
