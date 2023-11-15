@@ -81,20 +81,30 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	//DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(100, 0, 0), FColor::Orange, false, 10.0f );
 	FVector CellLocation = cellLoc;
 	// Define the relative offsets for neighboring cells
-	FHitResult HitResultLeft, HitResultDown;
+	FHitResult HitResultLeft, HitResultDown,HitResultDiagonal;
 	FCollisionQueryParams CollisionParams;
 	//CollisionParams.AddIgnoredActor(this);
 
 	bool bHitLeft = GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams);
 	bool bHitDown = GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
-	bool bhitLeftAndDown =  GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
+	
+	FCollisionQueryParams CollisionParamsDiagonal;
+	CollisionParamsDiagonal.AddIgnoredActor(this);
+	CollisionParamsDiagonal.AddIgnoredActor(HitResultLeft.GetActor());
+	CollisionParamsDiagonal.AddIgnoredActor(HitResultDown.GetActor());
+	bool bHitDiagonal = GetWorld()->LineTraceSingleByChannel(HitResultDiagonal, CellLocation, CellLocation + FVector(-100, 0, -100), ECC_Visibility, CollisionParamsDiagonal);
+	bool bhit =  GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
 	NeighbourLeft = HitResultLeft.GetActor();
 	NeighbourDown = HitResultDown.GetActor();
 
-	if(bHitLeft && bHitDown)
+	if(bhit)
 	{
 		bHitDown = false;
 		bHitLeft = false;
+	}
+	if(bHitDiagonal)
+	{
+		bhit == false;
 	}
 	if(bHitLeft)
 	{
@@ -112,7 +122,6 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 		}
 	}
 	
-	
 	if(bHitDown)
 	{
 		if(HitResultDown.GetActor()->IsA(CellClasses[0]))
@@ -128,7 +137,8 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 			return CellClasses[2];
 		}
 	}
-	if(bhitLeftAndDown)
+	
+	if(bhit)
 	{
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
@@ -167,6 +177,7 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 			return CellClasses[RandomIndex];
 		}
 	}
+	
 	return CellClasses[0];
 }
 
