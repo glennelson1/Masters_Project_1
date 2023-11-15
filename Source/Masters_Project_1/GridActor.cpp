@@ -93,7 +93,7 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	CollisionParamsDiagonal.AddIgnoredActor(HitResultLeft.GetActor());
 	CollisionParamsDiagonal.AddIgnoredActor(HitResultDown.GetActor());
 	bool bHitDiagonal = GetWorld()->LineTraceSingleByChannel(HitResultDiagonal, CellLocation, CellLocation + FVector(-100, 0, -100), ECC_Visibility, CollisionParamsDiagonal);
-	bool bhit =  GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
+	bool bhit =  GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDiagonal, CellLocation, CellLocation + FVector(-100, 0, -100), ECC_Visibility, CollisionParamsDiagonal);
 	NeighbourLeft = HitResultLeft.GetActor();
 	NeighbourDown = HitResultDown.GetActor();
 
@@ -102,10 +102,7 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 		bHitDown = false;
 		bHitLeft = false;
 	}
-	if(bHitDiagonal)
-	{
-		bhit == false;
-	}
+	
 	if(bHitLeft)
 	{
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]))
@@ -134,49 +131,58 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 		}
 		if(HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
-			return CellClasses[2];
+			return CellClasses[1];
 		}
 	}
-	
-	if(bhit)
+
+	if (bhit) {
+		for (int i = 0; i < 3; ++i) {
+			if (HitResultLeft.GetActor()->IsA(CellClasses[i]) && 
+				HitResultDown.GetActor()->IsA(CellClasses[i]) && 
+				HitResultDiagonal.GetActor()->IsA(CellClasses[i])) {
+				return CellClasses[RandomIndex];
+				}
+		}
+	}
+	/*if(bhit)
 	{
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0])&& HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1])&& HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1])&& HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
 		{
 			return CellClasses[RandomIndex];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
 		{
 			return CellClasses[RandomIndex];
 		}
-	}
+	}*/
 	
 	return CellClasses[0];
 }
