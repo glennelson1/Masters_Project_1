@@ -38,9 +38,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrid();
 
-	TSubclassOf<AActor> PickGrid(int32 X, int32 Z);
+	//TSubclassOf<AActor> PickGrid(int32 X, int32 Z);
 	
-	void FindNeigbours(FVector cellLoc);
+	TSubclassOf<AActor> FindNeigbours(FVector cellLoc);
 	AActor* NeighbourLeft = nullptr;
 	AActor* NeighbourRight = nullptr;
 	AActor* NeighbourUp = nullptr;

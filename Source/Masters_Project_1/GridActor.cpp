@@ -64,8 +64,8 @@ void AGridActor::SpawnGrid()
 			{
 				FVector SpawnLocation = FVector(X * 100, 0, Z * 100); // Adjust the spacing as needed.
 				AActor* NewCell;
-				FindNeigbours(SpawnLocation);
-				NewCell = GetWorld()->SpawnActor<AActor>(PickGrid(1,1), SpawnLocation, FRotator::ZeroRotator);
+				
+				NewCell = GetWorld()->SpawnActor<AActor>(FindNeigbours(SpawnLocation), SpawnLocation, FRotator::ZeroRotator);
 				Cellref.Add(NewCell);
 				
 			}
@@ -73,20 +73,15 @@ void AGridActor::SpawnGrid()
 	}
 }
 
-TSubclassOf<AActor> AGridActor::PickGrid(int32 X, int32 Z)
-{
-	
-	int32 RandomIndex = FMath::RandRange(0, CellClasses.Num() - 1);
-	return CellClasses[RandomIndex];
-	
-}
 
-void AGridActor::FindNeigbours(FVector cellLoc)
+
+TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 {
+	int32 RandomIndex = FMath::RandRange(0, CellClasses.Num()-1);
 	//DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(100, 0, 0), FColor::Orange, false, 10.0f );
 	FVector CellLocation = cellLoc;
 	// Define the relative offsets for neighboring cells
-	FHitResult HitResultLeft, HitResultRight, HitResultUp,HitResultDown;
+	FHitResult HitResultLeft, HitResultDown;
 	FCollisionQueryParams CollisionParams;
 	//CollisionParams.AddIgnoredActor(this);
 
@@ -94,8 +89,6 @@ void AGridActor::FindNeigbours(FVector cellLoc)
 	bool bHitDown = GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
 	bool bhitLeftAndDown =  GetWorld()->LineTraceSingleByChannel(HitResultLeft, CellLocation, CellLocation + FVector(-100, 0, 0), ECC_Visibility, CollisionParams) && GetWorld()->LineTraceSingleByChannel(HitResultDown, CellLocation, CellLocation + FVector(0, 0, -100), ECC_Visibility, CollisionParams);
 	NeighbourLeft = HitResultLeft.GetActor();
-	NeighbourRight = HitResultRight.GetActor();
-	NeighbourUp =HitResultUp.GetActor();
 	NeighbourDown = HitResultDown.GetActor();
 
 	if(bHitLeft && bHitDown)
@@ -103,172 +96,78 @@ void AGridActor::FindNeigbours(FVector cellLoc)
 		bHitDown = false;
 		bHitLeft = false;
 	}
-
-	
 	if(bHitLeft)
 	{
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left"));
+			return CellClasses[0];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
+			return CellClasses[0];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
+			return CellClasses[0];
 		}
 	}
+	
+	
 	if(bHitDown)
 	{
 		if(HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Down"));
+			return CellClasses[2];
 		}
 		if(HitResultDown.GetActor()->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Down"));
+			return CellClasses[2];
 		}
 		if(HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Down"));
+			return CellClasses[2];
 		}
 	}
 	if(bhitLeftAndDown)
 	{
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left and 0 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left and 0 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left and 0 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left and 1 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left and 1 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left and 1 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left and 2 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[1])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left and 2 down"));
+			return CellClasses[RandomIndex];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[2])&& HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left and 2 down"));
+			return CellClasses[RandomIndex];
 		}
 	}
-	
-	
-	
-	/*if (bHitLeft) {
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Left"));
-		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Left"));
-		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Left"));
-		}
-	}
-	if (bHitDown) {
-		if(HitResultDown.GetActor()->IsA(CellClasses[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Down"));
-		}
-		if(HitResultDown.GetActor()->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Down"));
-		}
-		if(HitResultDown.GetActor()->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Down"));
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Break"));
-	}*/
-	
-	/*if (bHitRight)
-	{
-		if(HitResultRight.GetActor()->IsA(CellClasses[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
-		}
-		if(HitResultRight.GetActor()->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Right"));
-		}
-		if(HitResultRight.GetActor()->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Right"));
-		}
-	}
-
-	if (bHitUp) {
-		if(HitResultUp.GetActor()->IsA(CellClasses[0]))
-		{
-				UE_LOG(LogTemp, Warning, TEXT("0 Up"));
-		}
-		if(HitResultUp.GetActor()->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Up"));
-		}
-		if(HitResultUp.GetActor()->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Up"));
-		}
-	} */
-
-	
-	
-	
-	
-	//CollisionParams.AddIgnoredActor(); // Ignore the current cell
-	
-	/*if (GetWorld()->LineTraceSingleByChannel(HitResultLeft, Start,End , ECC_Visibility, CollisionParams) )
-	{
-		DrawDebugLine(GetWorld(),Start,End, FColor::Orange, false, 10.0f );
-		NeighbourLeft = HitResultLeft.GetActor();
-		
-		NeighbourRight = HitResultRight.GetActor();
-
-		
-		NeighbourUp =HitResultUp.GetActor();
-		NeighbourDown = HitResultDown.GetActor();
-		if (NeighbourLeft->IsA(CellClasses[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("0 Right"));
-		}
-		if (NeighbourLeft->IsA(CellClasses[1]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("1 Right"));
-		}
-		if (NeighbourLeft->IsA(CellClasses[2]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("2 Right"));
-		}
-		
-	}*/
-	
+	return CellClasses[0];
 }
 
 // Called every frame
