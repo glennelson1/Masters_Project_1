@@ -78,6 +78,8 @@ void AGridActor::SpawnGrid()
 TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 {
 	int32 RandomIndex = FMath::RandRange(0, CellClasses.Num()-1);
+	int32 RandomIn1and2 = FMath::RandRange(1, 2);
+	int32 RandomIn0and1 = FMath::RandRange(0, 20);
 	//DrawDebugLine(GetWorld(),CellLocation,CellLocation + FVector(100, 0, 0), FColor::Orange, false, 10.0f );
 	FVector CellLocation = cellLoc;
 	// Define the relative offsets for neighboring cells
@@ -97,6 +99,19 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	NeighbourLeft = HitResultLeft.GetActor();
 	NeighbourDown = HitResultDown.GetActor();
 
+
+	int TileType01, TileType02;
+	if(RandomIn0and1 <= 15)
+	{
+		TileType01 = 1;
+	}
+	else TileType01 =2;
+	if(RandomIn0and1 <= 15)
+	{
+		TileType02 = 0;
+	}
+	else TileType02 =1;
+	
 	if(bhit)
 	{
 		bHitDown = false;
@@ -107,11 +122,11 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	{
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[0];
+			return CellClasses[TileType02];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[0];
+			return CellClasses[TileType02];
 		}
 		if(HitResultLeft.GetActor()->IsA(CellClasses[2]))
 		{
@@ -123,11 +138,11 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	{
 		if(HitResultDown.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[2];
+			return CellClasses[1];
 		}
 		if(HitResultDown.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[2];
+			return CellClasses[1];
 		}
 		if(HitResultDown.GetActor()->IsA(CellClasses[2]))
 		{
@@ -135,54 +150,67 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 		}
 	}
 
-	if (bhit) {
-		for (int i = 0; i < 3; ++i) {
-			if (HitResultLeft.GetActor()->IsA(CellClasses[i]) && 
-				HitResultDown.GetActor()->IsA(CellClasses[i]) && 
-				HitResultDiagonal.GetActor()->IsA(CellClasses[i])) {
-				return CellClasses[RandomIndex];
-				}
-		}
-	}
-	/*if(bhit)
+	
+	if(bhit)
 	{
+		
+		
+		
+
+		
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[0];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0])&& HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[TileType01];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1])&& HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1])&& HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[TileType01];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[0])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[2]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[1])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-		if(HitResultLeft.GetActor()->IsA(CellClasses[2])&& HitResultDown.GetActor()->IsA(CellClasses[2])&& HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[1]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
-			return CellClasses[RandomIndex];
+			return CellClasses[1];
 		}
-	}*/
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
+		{
+			return CellClasses[TileType01];
+		}
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[2]) && HitResultDiagonal.GetActor()->IsA(CellClasses[1]))
+		{
+			return CellClasses[1];
+		}
+		if(HitResultLeft.GetActor()->IsA(CellClasses[2]) && HitResultDown.GetActor()->IsA(CellClasses[2]) && HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
+		{
+			return CellClasses[1];
+		}
+		if(HitResultLeft.GetActor()->IsA(CellClasses[1]) && HitResultDown.GetActor()->IsA(CellClasses[2]) && HitResultDiagonal.GetActor()->IsA(CellClasses[2]))
+		{
+			return CellClasses[1];
+		}
+	}
 	
 	return CellClasses[0];
 }
