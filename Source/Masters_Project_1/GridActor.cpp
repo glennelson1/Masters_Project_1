@@ -153,11 +153,6 @@ TSubclassOf<AActor> AGridActor::FindNeigbours(FVector cellLoc)
 	
 	if(bhit)
 	{
-		
-		
-		
-
-		
 		if(HitResultLeft.GetActor()->IsA(CellClasses[0]) && HitResultDown.GetActor()->IsA(CellClasses[0]) && HitResultDiagonal.GetActor()->IsA(CellClasses[0]))
 		{
 			return CellClasses[0];
