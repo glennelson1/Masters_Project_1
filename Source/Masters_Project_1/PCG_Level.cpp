@@ -32,12 +32,15 @@ void APCG_Level::SpawnFloor(int loc)
 {
 	for (int32 Z = loc; Z < loc + 10; Z++)
 	{
-		FVector SpawnLocation = FVector(Z * 100, 0, 0); // Adjust the spacing as needed.
-		AActor* NewCell;
+		int32 RandomIn0and1 = FMath::RandRange(-10, 0);
+		for (int32 Y = RandomIn0and1; Y < 30; Y++)
+		{
+			FVector SpawnLocation = FVector(Z * 100, 0,Y  * -100); // Adjust the spacing as needed.
+			AActor* NewCell;
 				
-		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
-		//Cellref.Add(NewCell);
-		
+			NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
+			//Cellref.Add(NewCell);
+		}
 	}
 	
 }
