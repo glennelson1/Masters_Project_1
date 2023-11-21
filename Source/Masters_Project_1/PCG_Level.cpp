@@ -3,6 +3,10 @@
 
 #include "PCG_Level.h"
 
+#include <string>
+
+#include "GenericPlatform/GenericPlatformCrashContext.h"
+
 // Sets default values
 APCG_Level::APCG_Level()
 {
@@ -20,29 +24,125 @@ void APCG_Level::BeginPlay()
 {
 	int test = 0;
 	Super::BeginPlay();
-	for(int i = 0; i < 5; i++)
-	{
-		SpawnFloor(i * 15);
-		//test = 10;
-	}
 	
+	
+	
+	
+}
+
+void APCG_Level::DeleteGrid()
+{
+	for (AActor* actor : Cellref)
+	{
+		actor->Destroy();
+		
+	}
+	Cellref.Empty();
+}
+
+void APCG_Level::SpawnGrid()
+{
+	DeleteGrid();
+	
+	for(int i = 0; i < 150; i += 12)
+	{
+		int32 RandomInt= FMath::RandRange(0, 10);
+		if(RandomInt <= 5)
+		{
+			SpawnFloor(i);
+		}
+		if(RandomInt >= 6)
+		{
+			SpawnFloor(i - 1);
+		}
+		
+	}
 }
 
 void APCG_Level::SpawnFloor(int loc)
 {
-	for (int32 Z = loc; Z < loc + 10; Z++)
+	int32 RandomInt= FMath::RandRange(0, 10);
+	
+	for (int32 X = loc; X <= loc + 10; X++)
 	{
-		int32 RandomIn0and1 = FMath::RandRange(-10, 0);
-		for (int32 Y = RandomIn0and1; Y < 30; Y++)
+		for (int32 Y = 0; Y < 3; Y++)
 		{
-			FVector SpawnLocation = FVector(Z * 100, 0,Y  * -100); // Adjust the spacing as needed.
+			FVector SpawnLocation = FVector(X * 100, 0,Y * -100); // Adjust the spacing as needed.
 			AActor* NewCell;
-				
 			NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
-			//Cellref.Add(NewCell);
+			Cellref.Add(NewCell);
+			
 		}
 	}
+	for (int32 X = loc; X <= loc + RandomInt; X++)
+	{
+		
+		FVector SpawnLocation = FVector(X * 100, 0,800); // Adjust the spacing as needed.
+		AActor* NewCell;
+		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
+		Cellref.Add(NewCell);
+	}
+	SpawnBricks(loc);
+}
+
+void APCG_Level::SpawnBricks(int loc)
+{
+	int32 RandomInt= FMath::RandRange(0, 20);
 	
+	if(RandomInt <= 10)
+	{
+		SpawnOb(loc);
+	}
+	else if(RandomInt >= 11 && RandomInt <= 15)
+	{
+		
+		FVector SpawnLocation = FVector((loc + 6) * 100, 0,400); // Adjust the spacing as needed.
+		AActor* NewCell;
+		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
+		Cellref.Add(NewCell);
+	}
+	else if(RandomInt >= 16 && RandomInt <= 20)
+	{
+		for (int32 X = loc; X < loc + 4; X++)
+		{
+			FVector SpawnLocation = FVector((X + 5) * 100, 0,400); // Adjust the spacing as needed.
+			AActor* NewCell;
+			NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[0], SpawnLocation, FRotator::ZeroRotator);
+			Cellref.Add(NewCell);
+		}
+	}
+}
+
+void APCG_Level::SpawnOb(int loc)
+{
+	int32 RandomInt= FMath::RandRange(0, 20);
+	if(RandomInt <= 10)
+	{
+		
+	}
+	else if(RandomInt >= 11 && RandomInt <= 15)
+	{
+		
+		FVector SpawnLocation = FVector((loc + 1) * 100, 0, 100);
+		FVector SpawnLocation2 = FVector((loc + 9) * 100, 0, 100);// Adjust the spacing as needed.
+		AActor* NewCell;
+		
+		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[1], SpawnLocation, FRotator::ZeroRotator);
+		Cellref.Add(NewCell);
+		
+		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[2], SpawnLocation2, FRotator::ZeroRotator);
+		Cellref.Add(NewCell);
+		
+	}
+	else if(RandomInt >= 16 && RandomInt <= 20)
+	{
+		
+		FVector SpawnLocation = FVector((loc + 7) * 100, 0,100); // Adjust the spacing as needed.
+		AActor* NewCell;
+		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[3], SpawnLocation, FRotator::ZeroRotator);
+		Cellref.Add(NewCell);
+		
+	}
 }
 
 // Called every frame

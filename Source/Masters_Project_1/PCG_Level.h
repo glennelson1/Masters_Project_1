@@ -28,12 +28,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Grid Settings")
 	int32 GridSizeZ;
 
-	//TArray<AActor*> Cellref;
-	int32 RandomInt;
+	TArray<AActor*> Cellref;
+	UFUNCTION(BlueprintCallable)
+	void DeleteGrid();
 	
+	UFUNCTION(BlueprintCallable)
+	void SpawnGrid();
 	int m_LastCellPos;
 	
 	void SpawnFloor(int loc);
+
+	void SpawnBricks(int loc);
+	void SpawnOb(int loc);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
