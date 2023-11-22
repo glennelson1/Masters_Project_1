@@ -123,7 +123,7 @@ void APCG_Level::SpawnOb(int loc)
 	else if(RandomInt >= 11 && RandomInt <= 15)
 	{
 		
-		FVector SpawnLocation = FVector((loc + 1) * 100, 0, 100);
+		FVector SpawnLocation = FVector((loc + 3) * 100, 0, 100);
 		FVector SpawnLocation2 = FVector((loc + 9) * 100, 0, 100);// Adjust the spacing as needed.
 		AActor* NewCell;
 		
@@ -137,7 +137,7 @@ void APCG_Level::SpawnOb(int loc)
 	else if(RandomInt >= 16 && RandomInt <= 20)
 	{
 		
-		FVector SpawnLocation = FVector((loc + 7) * 100, 0,100); // Adjust the spacing as needed.
+		FVector SpawnLocation = FVector((loc + 6) * 100, 0,100); // Adjust the spacing as needed.
 		AActor* NewCell;
 		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[3], SpawnLocation, FRotator::ZeroRotator);
 		Cellref.Add(NewCell);
