@@ -40,6 +40,7 @@ protected:
 
 	void SpawnBricks(int loc);
 	void SpawnOb(int loc);
+	void SpawnPlatforms(int loc);
 	
 public:	
 	// Called every frame
