@@ -11,12 +11,58 @@
 APCG_Level::APCG_Level()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Create the directory if it doesn't exist
+	FPlatformFileManager::Get().GetPlatformFile().CreateDirectoryTree(*SavedLevelsDirectory);
+
 }
 
 // Called when the game starts or when spawned
 void APCG_Level::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APCG_Level::SaveLevelSeed(const FString& Seed)
+{
+	FString SaveGamePath = SavedLevelsDirectory + LevelFileName;
+
+	if (FFileHelper::SaveStringToFile(Seed, *SaveGamePath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Level seed saved successfully."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save level seed."));
+	}
+}
+
+FString APCG_Level::LoadLevelSeed()
+{
+	FString LoadGamePath = SavedLevelsDirectory + LevelFileName;
+	FString Seed;
+
+	if (FFileHelper::LoadFileToString(Seed, *LoadGamePath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Level seed loaded successfully."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load level seed. Generating a new one."));
+		// You might want to generate a new seed here if loading fails
+	}
+
+	return Seed;
+}
+
+FString APCG_Level::GenerateNewSeed()
+{
+	int32 RandomSeed = FMath::Rand();
+
+	// Convert the integer to a string
+	FString SeedString = FString::Printf(TEXT("%d"), RandomSeed);
+
+	return SeedString;
 }
 
 void APCG_Level::DeleteGrid()
@@ -46,6 +92,8 @@ void APCG_Level::SpawnGrid()
 		}
 		
 	}
+	FString CurrentSeed = GenerateNewSeed(); // Replace this with your actual seed generation logic
+	SaveLevelSeed(CurrentSeed);
 }
 
 void APCG_Level::SpawnFloor(int loc)

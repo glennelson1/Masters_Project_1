@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "PCG_Level.generated.h"
 
 UCLASS()
@@ -29,6 +31,14 @@ protected:
 	int32 GridSizeZ;
 
 	TArray<AActor*> Cellref;
+	
+	UFUNCTION(BlueprintCallable)
+	void SaveLevelSeed(const FString& Seed);
+	UFUNCTION(BlueprintCallable)
+	FString LoadLevelSeed();
+	
+	FString GenerateNewSeed();
+
 	UFUNCTION(BlueprintCallable)
 	void DeleteGrid();
 	
@@ -42,6 +52,8 @@ protected:
 	void SpawnOb(int loc);
 	void SpawnPlatforms(int loc);
 	
+	FString SavedLevelsDirectory = FPaths::ProjectSavedDir() + TEXT("Levels/");
+	FString LevelFileName = "SavedLevel.txt";
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
