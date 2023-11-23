@@ -75,7 +75,7 @@ void APCG_Level::DeleteGrid()
 	Cellref.Empty();
 }
 
-void APCG_Level::SpawnGrid()
+void APCG_Level::SpawnGrid(const FString& Seed)
 {
 	DeleteGrid();
 	
@@ -92,8 +92,20 @@ void APCG_Level::SpawnGrid()
 		}
 		
 	}
-	FString CurrentSeed = GenerateNewSeed(); // Replace this with your actual seed generation logic
-	SaveLevelSeed(CurrentSeed);
+	SaveLevelSeed(Seed);
+}
+
+void APCG_Level::GenerateAndSpawnLevel()
+{
+	FString CurrentSeed = LoadLevelSeed();
+	if (CurrentSeed.IsEmpty())
+	{
+		// If no existing seed, generate a new one
+		CurrentSeed = GenerateNewSeed();
+	}
+
+	// Spawn the level using the generated or loaded seed
+	SpawnGrid(CurrentSeed);
 }
 
 void APCG_Level::SpawnFloor(int loc)

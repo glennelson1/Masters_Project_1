@@ -43,7 +43,11 @@ protected:
 	void DeleteGrid();
 	
 	UFUNCTION(BlueprintCallable)
-	void SpawnGrid();
+	void SpawnGrid(const FString& Seed);
+	
+	UFUNCTION(BlueprintCallable)
+	void GenerateAndSpawnLevel();
+	
 	int m_LastCellPos;
 	
 	void SpawnFloor(int loc);
