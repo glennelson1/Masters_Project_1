@@ -32,7 +32,39 @@ void ALevelSpawner::BeginPlay()
     
 	for (int32 i = 0; i < LevelSize; i++)
 	{
-		int32 RandomIndex = FMath::RandRange(0, LevelSegments.Num() - 1);
+		
+
+		UWorld* World = GetWorld();
+		FActorSpawnParameters SpawnParams;
+		if (World)
+		{
+			int32 RandomIndex = FMath::RandRange(0, 90);
+			if(RandomIndex <= 40)
+			{
+				
+				AActor* NewSegment = World->SpawnActor<AActor>(LevelSegments[0], SpawnLocation, GetActorRotation(), SpawnParams);
+                
+				// Update the SpawnLocation for the next segment
+				SpawnLocation += SegmentOffset;
+			}
+			if(RandomIndex >= 41 && RandomIndex <= 60)
+			{
+				AActor* NewSegment = World->SpawnActor<AActor>(LevelSegments[1], SpawnLocation, GetActorRotation(), SpawnParams);
+				SpawnLocation += SegmentOffset;
+			}
+			if(RandomIndex >= 61 && RandomIndex <= 80)
+			{
+				AActor* NewSegment = World->SpawnActor<AActor>(LevelSegments[2], SpawnLocation, GetActorRotation(), SpawnParams);
+				SpawnLocation += SegmentOffset;
+			}
+			if(RandomIndex >= 81)
+			{
+				AActor* NewSegment = World->SpawnActor<AActor>(LevelSegments[3], SpawnLocation, GetActorRotation(), SpawnParams);
+				SpawnLocation += SegmentOffset;
+			}
+		}
+
+		/*int32 RandomIndex = FMath::RandRange(0, LevelSegments.Num() - 1);
         
 		if (LevelSegments[RandomIndex])
 		{
@@ -45,7 +77,7 @@ void ALevelSpawner::BeginPlay()
 				// Update the SpawnLocation for the next segment
 				SpawnLocation += SegmentOffset;
 			}
-		}
+		}*/
 	}
 }
 
