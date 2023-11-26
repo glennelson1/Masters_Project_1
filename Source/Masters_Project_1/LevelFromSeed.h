@@ -4,54 +4,54 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PCG_Level.generated.h"
+#include "LevelFromSeed.generated.h"
 
 UCLASS()
-class MASTERS_PROJECT_1_API APCG_Level : public AActor
+class MASTERS_PROJECT_1_API ALevelFromSeed : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APCG_Level();
+	ALevelFromSeed();
 
 protected:
-
-	
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere, Category = "Grid")
 	TArray<TSubclassOf<AActor>> CellClasses;
+	
 	void GenerateLevelFromChoices(const TArray<int32>& Choices);
+	UFUNCTION(BlueprintCallable)
 	void LoadLevelFromSeed(const FString& Seed);
-	
+    	
 	TArray<AActor*> Cellref;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void DeleteGrid();
-	
+    	
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrid();
-	
+    	
 	int m_LastCellPos;
-
+    
 	//Level elements
-	void SpawnFloor(int loc);
-	void SpawnBricks(int loc);
-	void SpawnOb(int loc);
-	void SpawnPlatforms(int loc);
-
-	
+	void SpawnFloor(int loc,const TArray<int32>& Choices, int32 RandomInt);
+	void SpawnBricks(int loc, const TArray<int32>& Choices, int32 ChoiceIndex);
+	void SpawnOb(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);
+	void SpawnPlatforms(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);
+    
+    	
 	FString GenerateSeed();
-	
+    	
 	void SaveSeedToFile(const FString& Seed);
 	void DebugPrintSeed();
-	
-
+    	
+    
 	UPROPERTY(EditAnywhere, Category = "Seed")
 	TArray<int32> RandomChoices;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

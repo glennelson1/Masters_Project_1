@@ -1,35 +1,36 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PCG_Level.h"
+#include "LevelFromSeed.h"
 
 #include <string>
 
-#include "GenericPlatform/GenericPlatformCrashContext.h"
-
 // Sets default values
-APCG_Level::APCG_Level()
+ALevelFromSeed::ALevelFromSeed()
 {
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 
-void APCG_Level::LoadLevelFromSeed(const FString& Seed)
+// Called when the game starts or when spawned
+void ALevelFromSeed::LoadLevelFromSeed(const FString& Seed)
 {
+	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *Seed);
 	TArray<FString> SeedValues;
+
+	
+	
 	Seed.ParseIntoArray(SeedValues, TEXT(","), true);
 
 	TArray<int32> DecodedChoices;
-	for (const FString& Value : SeedValues)
-	{
-		if (Value.Len() > 0)
-		{
-			DecodedChoices.Add(FCString::Atoi(*Value));
-		}
-	}
+	
+	DecodedChoices.Add(SeedValues.Num());
+	
 
 	GenerateLevelFromChoices(DecodedChoices);
 }
-void APCG_Level::GenerateLevelFromChoices(const TArray<int32>& Choices)
+void ALevelFromSeed::GenerateLevelFromChoices(const TArray<int32>& Choices)
 {
 	DeleteGrid(); // Clear existing level
 
@@ -43,25 +44,26 @@ void APCG_Level::GenerateLevelFromChoices(const TArray<int32>& Choices)
 		}
 
 		int32 RandomInt = Choices[ChoiceIndex++];
-		
+		UE_LOG(LogTemp, Warning, TEXT("The integer value is: %d"), RandomInt);
 
-		if (RandomInt <= 70)
+		if (RandomInt <= 7)
 		{
-			SpawnFloor(i + 2);
+			SpawnFloor(i + 2,  Choices, RandomInt);
 		}
-		if (RandomInt >= 71)
+		if (RandomInt >= 8)
 		{
-			SpawnFloor(i);
+			SpawnFloor(i,Choices, RandomInt);
 		}
 	}
+	
 }
 // Called when the game starts or when spawned
-void APCG_Level::BeginPlay()
+void ALevelFromSeed::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void APCG_Level::DeleteGrid()
+void ALevelFromSeed::DeleteGrid()
 {
 	for (AActor* actor : Cellref)
 	{
@@ -71,9 +73,10 @@ void APCG_Level::DeleteGrid()
 	Cellref.Empty();
 }
 
-void APCG_Level::SpawnGrid()
+void ALevelFromSeed::SpawnGrid()
 {
-	DeleteGrid();
+	
+	/*DeleteGrid();
 	RandomChoices.Empty();
 	
 	for(int i = 0; i < 150; i += 10)
@@ -92,13 +95,15 @@ void APCG_Level::SpawnGrid()
 	}
 	GenerateSeed();
 	SaveSeedToFile(GenerateSeed());
-	DebugPrintSeed();
+	DebugPrintSeed();*/
 }
 
-void APCG_Level::SpawnFloor(int loc)
+void ALevelFromSeed::SpawnFloor(int loc,const TArray<int32>& Choices, int32 RandomInt)
 {
-	int32 RandomInt= FMath::RandRange(0, 10);
-	RandomChoices.Add(RandomInt);
+	//int32 RandomInt= FMath::RandRange(0, 10);
+	//RandomInt = ChoiceIndex++;
+	
+	
 	for (int32 X = loc; X <= loc + 10; X++)
 	{
 		for (int32 Y = 0; Y < 3; Y++)
@@ -111,16 +116,24 @@ void APCG_Level::SpawnFloor(int loc)
 		}
 	}
 	
-	SpawnBricks(loc);
+	SpawnBricks(loc, Choices, RandomInt);
 }
 
-void APCG_Level::SpawnBricks(int loc)
+void ALevelFromSeed::SpawnBricks(int loc, const TArray<int32>& Choices, int32 ChoiceIndex)
 {
-	int32 RandomInt= FMath::RandRange(0, 20);
-	RandomChoices.Add(RandomInt);
+	//int32 RandomInt= FMath::RandRange(0, 20);
+	if (ChoiceIndex >= Choices.Num())
+	{
+		// Handle error or end of choices
+		return;
+	}
+
+	// Use the current choice
+	int32 RandomInt = Choices[ChoiceIndex++];
+	
 	if(RandomInt <= 10)
 	{
-		SpawnOb(loc);
+		SpawnOb(loc,Choices, RandomInt);
 	}
 	else if(RandomInt >= 11 && RandomInt <= 15)//spawns single block
 	{
@@ -139,14 +152,22 @@ void APCG_Level::SpawnBricks(int loc)
 			NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[4], SpawnLocation, FRotator::ZeroRotator);
 			Cellref.Add(NewCell);
 		}
-		SpawnPlatforms(loc);
+		SpawnPlatforms(loc,Choices, RandomInt);
 	}
+	ChoiceIndex++;
 }
 
-void APCG_Level::SpawnOb(int loc)
+void ALevelFromSeed::SpawnOb(int loc,const TArray<int32>& Choices, int32 ChoiceIndex)
 {
-	int32 RandomInt= FMath::RandRange(0, 20);
-	RandomChoices.Add(RandomInt);
+	//int32 RandomInt= FMath::RandRange(0, 20);
+	if (ChoiceIndex >= Choices.Num())
+	{
+		// Handle error or end of choices
+		return;
+	}
+
+	// Use the current choice
+	int32 RandomInt = Choices[ChoiceIndex++];
 	if(RandomInt >= 11 && RandomInt <= 15)//spawns pipes
 	{
 		
@@ -168,12 +189,21 @@ void APCG_Level::SpawnOb(int loc)
 		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[3], SpawnLocation, FRotator::ZeroRotator);
 		Cellref.Add(NewCell);
 	}
+	
 }
 
-void APCG_Level::SpawnPlatforms(int loc) 
+void ALevelFromSeed::SpawnPlatforms(int loc,const TArray<int32>& Choices, int32 ChoiceIndex) 
 {
-	int32 RandomInt= FMath::RandRange(0, 100);
-	RandomChoices.Add(RandomInt);
+	//int32 RandomInt= FMath::RandRange(0, 100);
+	if (ChoiceIndex >= Choices.Num())
+	{
+		// Handle error or end of choices
+		return;
+	}
+
+	// Use the current choice
+	int32 RandomInt = Choices[ChoiceIndex++];
+	
 	if (RandomInt <= 50)
 	{
 		if(RandomInt <=30)
@@ -200,7 +230,7 @@ void APCG_Level::SpawnPlatforms(int loc)
 	
 }
 
-FString APCG_Level::GenerateSeed()
+FString ALevelFromSeed::GenerateSeed()
 {
 	FString Seed;
 	for (int32 Choice : RandomChoices)
@@ -210,20 +240,22 @@ FString APCG_Level::GenerateSeed()
 	return Seed;
 }
 
-void APCG_Level::SaveSeedToFile(const FString& Seed)
+void ALevelFromSeed::SaveSeedToFile(const FString& Seed)
 {
 	FString SavePath = FPaths::ProjectSavedDir() + TEXT("LevelSeeds.txt");
 	FFileHelper::SaveStringToFile(Seed + TEXT("\n"), *SavePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 
 }
-void APCG_Level::DebugPrintSeed()
+void ALevelFromSeed::DebugPrintSeed()
 {
 	FString GeneratedSeed = GenerateSeed();
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Seed: ") + GeneratedSeed);
 }
 
-void APCG_Level::Tick(float DeltaTime)
+// Called every frame
+void ALevelFromSeed::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
