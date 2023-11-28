@@ -16,6 +16,9 @@ public:
 	ALevelFromSeed();
 
 protected:
+	int32 RandomInt;
+
+	int32 m_Index;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,7 +40,7 @@ protected:
 	int m_LastCellPos;
     
 	//Level elements
-	void SpawnFloor(int loc,const TArray<int32>& Choices, int32 RandomInt);
+	void SpawnFloor(int loc,const TArray<int32>& Choices, int32 Int);
 	void SpawnBricks(int loc, const TArray<int32>& Choices, int32 ChoiceIndex);
 	void SpawnOb(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);
 	void SpawnPlatforms(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);

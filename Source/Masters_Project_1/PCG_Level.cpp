@@ -97,8 +97,7 @@ void APCG_Level::SpawnGrid()
 
 void APCG_Level::SpawnFloor(int loc)
 {
-	int32 RandomInt= FMath::RandRange(0, 10);
-	RandomChoices.Add(RandomInt);
+	
 	for (int32 X = loc; X <= loc + 10; X++)
 	{
 		for (int32 Y = 0; Y < 3; Y++)
@@ -130,7 +129,7 @@ void APCG_Level::SpawnBricks(int loc)
 		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[5], SpawnLocation, FRotator::ZeroRotator);
 		Cellref.Add(NewCell);
 	}
-	else if(RandomInt >= 16 && RandomInt <= 20)// spawns a platform of blocks
+	else if(RandomInt >= 16)// spawns a platform of blocks
 	{
 		for (int32 X = loc; X < loc + 3; X++)
 		{
