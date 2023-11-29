@@ -13,6 +13,7 @@ APCG_Level::APCG_Level()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+
 // Called when the game starts or when spawned
 void APCG_Level::BeginPlay()
 {
@@ -32,25 +33,29 @@ void APCG_Level::DeleteGrid()
 void APCG_Level::SpawnGrid()
 {
 	DeleteGrid();
+	RandomChoices.Empty();
 	
 	for(int i = 0; i < 150; i += 10)
 	{
-		int32 RandomInt= FMath::RandRange(0, 100);
-		if(RandomInt <= 70)
+		int32 RandomInt= FMath::RandRange(0, 10);
+		RandomChoices.Add(RandomInt);
+		if(RandomInt <= 7)
 		{
 			SpawnFloor(i + 2);
 		}
-		if(RandomInt >= 71) // puts a gap in the floor
+		if(RandomInt >= 8) // puts a gap in the floor
 		{
 			SpawnFloor(i);
 		}
 		
 	}
+	GenerateSeed();
+	SaveSeedToFile(GenerateSeed());
+	//DebugPrintSeed();
 }
 
 void APCG_Level::SpawnFloor(int loc)
 {
-	int32 RandomInt= FMath::RandRange(0, 10);
 	
 	for (int32 X = loc; X <= loc + 10; X++)
 	{
@@ -70,7 +75,7 @@ void APCG_Level::SpawnFloor(int loc)
 void APCG_Level::SpawnBricks(int loc)
 {
 	int32 RandomInt= FMath::RandRange(0, 20);
-	
+	RandomChoices.Add(RandomInt);
 	if(RandomInt <= 10)
 	{
 		SpawnOb(loc);
@@ -83,7 +88,7 @@ void APCG_Level::SpawnBricks(int loc)
 		NewCell = GetWorld()->SpawnActor<AActor>(CellClasses[5], SpawnLocation, FRotator::ZeroRotator);
 		Cellref.Add(NewCell);
 	}
-	else if(RandomInt >= 16 && RandomInt <= 20)// spawns a platform of blocks
+	else if(RandomInt >= 16)// spawns a platform of blocks
 	{
 		for (int32 X = loc; X < loc + 3; X++)
 		{
@@ -99,6 +104,7 @@ void APCG_Level::SpawnBricks(int loc)
 void APCG_Level::SpawnOb(int loc)
 {
 	int32 RandomInt= FMath::RandRange(0, 20);
+	RandomChoices.Add(RandomInt);
 	if(RandomInt >= 11 && RandomInt <= 15)//spawns pipes
 	{
 		
@@ -125,6 +131,7 @@ void APCG_Level::SpawnOb(int loc)
 void APCG_Level::SpawnPlatforms(int loc) 
 {
 	int32 RandomInt= FMath::RandRange(0, 100);
+	RandomChoices.Add(RandomInt);
 	if (RandomInt <= 50)
 	{
 		if(RandomInt <=30)
@@ -151,6 +158,27 @@ void APCG_Level::SpawnPlatforms(int loc)
 	
 }
 
+FString APCG_Level::GenerateSeed()
+{
+	FString Seed;
+	for (int32 Choice : RandomChoices)
+	{
+		Seed += FString::Printf(TEXT("%d,"), Choice);
+	}
+	return Seed;
+}
+
+void APCG_Level::SaveSeedToFile(const FString& Seed)
+{
+	FString SavePath = FPaths::ProjectSavedDir() + TEXT("LevelSeeds.txt");
+	FFileHelper::SaveStringToFile(Seed + TEXT("\n"), *SavePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+
+}
+void APCG_Level::DebugPrintSeed()
+{
+	FString GeneratedSeed = GenerateSeed();
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Seed: ") + GeneratedSeed);
+}
 
 void APCG_Level::Tick(float DeltaTime)
 {
