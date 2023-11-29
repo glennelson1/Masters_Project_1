@@ -13,48 +13,7 @@ APCG_Level::APCG_Level()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void APCG_Level::LoadLevelFromSeed(const FString& Seed)
-{
-	TArray<FString> SeedValues;
-	Seed.ParseIntoArray(SeedValues, TEXT(","), true);
 
-	TArray<int32> DecodedChoices;
-	for (const FString& Value : SeedValues)
-	{
-		if (Value.Len() > 0)
-		{
-			DecodedChoices.Add(FCString::Atoi(*Value));
-		}
-	}
-
-	GenerateLevelFromChoices(DecodedChoices);
-}
-void APCG_Level::GenerateLevelFromChoices(const TArray<int32>& Choices)
-{
-	DeleteGrid(); // Clear existing level
-
-	int32 ChoiceIndex = 0;
-
-	for (int i = 0; i < 150; i += 10)
-	{
-		if (ChoiceIndex >= Choices.Num())
-		{
-			break; // Prevent out-of-bounds access if the seed is shorter than expected
-		}
-
-		int32 RandomInt = Choices[ChoiceIndex++];
-		
-
-		if (RandomInt <= 70)
-		{
-			SpawnFloor(i + 2);
-		}
-		if (RandomInt >= 71)
-		{
-			SpawnFloor(i);
-		}
-	}
-}
 // Called when the game starts or when spawned
 void APCG_Level::BeginPlay()
 {
@@ -92,7 +51,7 @@ void APCG_Level::SpawnGrid()
 	}
 	GenerateSeed();
 	SaveSeedToFile(GenerateSeed());
-	DebugPrintSeed();
+	//DebugPrintSeed();
 }
 
 void APCG_Level::SpawnFloor(int loc)
@@ -218,7 +177,7 @@ void APCG_Level::SaveSeedToFile(const FString& Seed)
 void APCG_Level::DebugPrintSeed()
 {
 	FString GeneratedSeed = GenerateSeed();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Seed: ") + GeneratedSeed);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Seed: ") + GeneratedSeed);
 }
 
 void APCG_Level::Tick(float DeltaTime)

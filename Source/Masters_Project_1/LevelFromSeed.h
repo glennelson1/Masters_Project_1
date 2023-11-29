@@ -27,33 +27,22 @@ protected:
 	
 	void GenerateLevelFromChoices(const TArray<int32>& Choices);
 	UFUNCTION(BlueprintCallable)
-	void LoadLevelFromSeed(const FString& Seed);
-    	
+	void LoadLevelFromSeed();
+	
+	UPROPERTY(EditAnywhere, Category = "Seed")
+	FString Seed;
+	
 	TArray<AActor*> Cellref;
-
+	
 	UFUNCTION(BlueprintCallable)
 	void DeleteGrid();
     	
-	UFUNCTION(BlueprintCallable)
-	void SpawnGrid();
+	
     	
 	int m_LastCellPos;
     
-	//Level elements
-	void SpawnFloor(int loc,const TArray<int32>& Choices, int32 Int);
-	void SpawnBricks(int loc, const TArray<int32>& Choices, int32 ChoiceIndex);
-	void SpawnOb(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);
-	void SpawnPlatforms(int loc,const TArray<int32>& Choices, int32 ChoiceIndex);
-    
-    	
-	FString GenerateSeed();
-    	
-	void SaveSeedToFile(const FString& Seed);
-	void DebugPrintSeed();
-    	
-    
-	UPROPERTY(EditAnywhere, Category = "Seed")
-	TArray<int32> RandomChoices;
+	
+	
 
 public:	
 	// Called every frame
