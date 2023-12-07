@@ -20,6 +20,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+
+	UFUNCTION(BlueprintCallable)
+	void DeleteGrid();
+	
+	UFUNCTION(BlueprintCallable)
+	void SpawnGrid();
+	
 	void InitializeGrid();
 	void DoSimulationStep();
 	int GetNeighborWallCount(int x, int y);
@@ -35,11 +43,18 @@ protected:
 	
 	TArray<TArray<int>> Grid;
 
-	
-	const int m_Width = 100;
-	const int m_Height = 50;
-	const int m_FillProbability = 45;
-	const int m_SmoothingSteps = 5;
+	TArray<AActor*> Cellref;
+
+
+
+	UPROPERTY(EditAnywhere, Category = "Properties")
+	int32 m_Width = 100;
+	UPROPERTY(EditAnywhere, Category = "Properties")
+	int32 m_Height = 50;
+	UPROPERTY(EditAnywhere, Category = "Properties")
+	int32 m_FillProbability = 40;
+	UPROPERTY(EditAnywhere, Category = "Properties")
+	int32 m_SmoothingSteps = 5;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

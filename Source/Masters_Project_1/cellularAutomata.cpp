@@ -17,6 +17,23 @@ AcellularAutomata::AcellularAutomata()
 void AcellularAutomata::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	
+}
+
+void AcellularAutomata::DeleteGrid()
+{
+	for (AActor* actor : Cellref)
+	{
+		actor->Destroy();
+		
+	}
+	Cellref.Empty();
+}
+
+void AcellularAutomata::SpawnGrid()
+{
+	DeleteGrid();
 	srand(time(nullptr)); 
 
 	InitializeGrid();
@@ -24,7 +41,6 @@ void AcellularAutomata::BeginPlay()
 		DoSimulationStep();
 	}
 	GenerateLevel();
-	
 }
 
 void AcellularAutomata::InitializeGrid()
@@ -105,7 +121,7 @@ void AcellularAutomata::SpawnMeshAtLocation(UStaticMesh* Mesh, FVector Location)
 
 	FActorSpawnParameters SpawnParams;
 	AStaticMeshActor* MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(Location, FRotator::ZeroRotator, SpawnParams);
-    
+	Cellref.Add(MeshActor);
 	if (MeshActor) {
 		MeshActor->GetStaticMeshComponent()->SetStaticMesh(Mesh);
 		MeshActor->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f)); 
